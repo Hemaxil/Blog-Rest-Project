@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block content %}
+<div class='container'>
+  <div class='col-sm-6 col-sm-offset-3'>
+    {% if obj.image %}
+      <img src="{{obj.image.url}}" alt="img field" class='img-fluid'>
+    {% endif %}
+    <h1>{{obj.title}}</h1>{% if obj.draft %}<small><span> Draft</span></small>{% endif %}
+    <small>created by {{obj.user}} on: {{obj.publish}}</small>
+    <br><small>Read time:{{obj.read_time|time:'i'}} minutes</small>
+    <br>
+    <div class="fb-like" data-href="{{request.build_absolute_uri}}" data-layout="button_count" data-action="like" data-size="small" data-show-faces="false" data-share="true"></div>
+    <br>
+    <a href="https://www.facebook.com/sharer/sharer.php?u={{request.build_absolute_uri}}" role="button">
+      Facebook
+    </a>
+    <a href="https://twitter.com/home?status={{sharecontent}}{{request.build_absolute_uri}}/">
+      Twitter
+    </a>
+    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{request.build_absolute_uri}}/&title={{sharetitle}}&summary={{sharecontent}}!&source={{request.build_absolute_uri}}">
+      Linkedin
+    </a>
+    <a href='https://plus.google.com/share?url={{request.build_absolute_uri}}'>Google+</a>
+    <br>
+    <hr>
+    <div class='row'>
+      <div class='col-sm-offset-2'>
+        <div class='post-content'>
+          {{obj.id}}
+          <br>
+        <p>{{obj.get_markdown}}</p>
+      </div>
+        <hr>
+        <div class=lead>Comments</div>
+        <hr>
+        <form method="POST" action=" ">
+          {% csrf_token %}
+          {{comment_form}}
+          <input type="submit" value="Post Comment" class="btn btn-default">
+        </form>
+
+        {% for comment in comments %}
+          <br>
+          <blockquote class="blockquote">
+            <p class="mb-0">{{comment.comment_text}}</p>
+            <footer class="blockquote-footer">by <cite title="Source Title"> {{comment.user.username}} on {{comment.timestamp|timesince}} ago|
+              {% if comment.children.count > 0 %}
+                {% if comment.children.count > 1 %}
+                  {{comment.children.count}} Comments|
+                  {% endif %}
+                  {{comment.children.count}} Comment|
+                  {% endif %}</cite><a href=# class='reply-btn'>reply|</a><a href={{comment.get_absolute_url}}>Thread</a></footer>
+            <div class='comment-reply'>
+              {% for child in comment.children %}
+              <blockquote class="blockquote">
+                <p class="mb-0">{{child.comment_text}}</p>
+                <footer class="blockquote-footer">by <cite title="Source Title"> {{child.user.username}} on {{child.timestamp|timesince}} ago|
+                  <a href=#>reply</a></cite>|
+                </footer>
+              </blockquote>
+              {% endfor %}
+              <form method="POST" action=" ">
+                {% csrf_token %}
+                <input type="hidden" name="parent_id" value='{{comment.id}}'>
+                {{comment_form}}
+                <input type="submit" value="Reply" class="btn btn-default">
+              </form>
+          </div>
+
+          </blockquote>
+          <!--{{comment.content_object}}-->
+          <hr>
+        {% endfor %}
+
+
+        <!--<div class="fb-comments" data-href="{{request.build_absolute_uri}}" data-numposts="5"></div>
+
+    --></div>
+    </div>
+  </div>
+  <br>
+
+  <p><a href="{% url "posts:delete" slug=obj.slug %}"class="btn btn-primary" role="button">Delete</a>
+  <a href="{% url "posts:update" slug=obj.slug %}"class="btn btn-primary" role="button">Update</a></p>
+  <p><a href="{% url "posts:create" %}" class="btn btn-primary" role="button">Create New Post</a></p>
+
+<!--<form method="POST" action="{% url "posts:create" %}">
+  {% csrf_token %}
+  <input type="submit" value="Create New">
+</form>-->
+{% endblock content %}
