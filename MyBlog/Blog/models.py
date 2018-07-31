@@ -37,7 +37,7 @@ def pre_save_receiver(sender,instance,*args,**kwargs):
         htmlstring=instance.get_markdown()
         time=get_read_time(htmlstring)
         instance.read_time=time
-        
+
 class PostManager(models.Manager):
     def active(self,*args,**kwargs):
         return super(PostManager,self).filter(draft=False).filter(publish__lte=timezone.now())
@@ -48,8 +48,8 @@ class Post(models.Model):
     title=models.CharField(max_length=100,blank=True,null=True)
     slug=models.SlugField(unique=True)
     image=models.ImageField(upload_to=upload_location,height_field='height_field',width_field='width_field',null=True,blank=True)
-    height_field=models.IntegerField(default=50)
-    width_field=models.IntegerField(default=50)
+    height_field=models.IntegerField(default=50,null=True)
+    width_field=models.IntegerField(default=50,null=True)
     content=models.TextField()
     draft=models.BooleanField(default=False)
     publish=models.DateField(auto_now=False,auto_now_add=False)

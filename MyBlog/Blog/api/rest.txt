@@ -1,0 +1,18 @@
+from Blog.models import Post
+from Blog.api.serializers import PostDetailSerializer
+
+
+data={
+  "title":"Post 2",
+  "slug":"post-2",
+  "content":"This is Post 2",
+  "publish":"2018-06-12",
+}
+
+obj=Post.objects.get(slug="post-3")
+new_item=PostDetailSerializer(obj,data=data)
+
+if new_item.is_valid():
+  new_item.save()
+else:
+  print(new_item.errors)

@@ -6,9 +6,9 @@ from .views import *
 app_name='Blog'
 urlpatterns = [
     url(r'^$',PostListAPIView.as_view(),name="lists"),
-    # url(r'^create',post_create,name='create'),
-    # url(r'^details/(?P<slug>[\w-]+)/update',post_update,name="update"),
-    # url(r'^details/(?P<slug>[\w-]+)/delete',post_delete,name='delete'),
-    # url(r'^details/(?P<slug>[\w-]+)',post_detail,name="details"),
+    url(r'^create',PostCreateAPIView.as_view(),name='create'),
+    url(r'^(?P<slug>[\w-]+)/update',PostUpdateAPIView.as_view(),name="update"),
+    url(r'^(?P<slug>[\w-]+)/delete',PostDeleteAPIView.as_view(),name='delete'),
+    url(r'(?P<slug>[\w-]+)',PostDetailAPIView.as_view(),name="details"),
 ]
 # defining path for static files to be stored
